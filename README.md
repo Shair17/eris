@@ -1,1 +1,1 @@
-"# shopox" 
+# shopox
