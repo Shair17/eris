@@ -1,4 +1,10 @@
-import { prop, getModelForClass, ModelOptions } from '@typegoose/typegoose';
+import {
+	Ref,
+	prop,
+	getModelForClass,
+	ModelOptions,
+} from '@typegoose/typegoose';
+import { User } from './user.model';
 
 @ModelOptions({
 	schemaOptions: {
@@ -35,6 +41,12 @@ export class Garage {
 		required: true,
 	})
 	public exit!: Date;
+
+	@prop({
+		required: true,
+		ref: () => User,
+	})
+	public receivedBy!: Ref<User>;
 }
 
 export const garageModel = getModelForClass(Garage);

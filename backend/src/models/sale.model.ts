@@ -1,4 +1,10 @@
-import { prop, getModelForClass, ModelOptions } from '@typegoose/typegoose';
+import {
+	Ref,
+	prop,
+	getModelForClass,
+	ModelOptions,
+} from '@typegoose/typegoose';
+import { Product } from './product.model';
 
 @ModelOptions({
 	schemaOptions: {
@@ -15,6 +21,9 @@ export class Sale {
 		required: true,
 	})
 	public paid!: number;
+
+	@prop({ ref: () => Product, required: true })
+	products!: Ref<Product>[];
 }
 
 export const saleModel = getModelForClass(Sale);
