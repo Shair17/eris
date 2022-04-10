@@ -12,7 +12,9 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@typegoose/typegoose": "^9.7.1",
     "ajv": "^8.6.1",
+    "argon2": "^0.28.5",
     "cross-env": "^7.0.3",
     "fastify": "^3.27.2",
     "fastify-compress": "^4.0.1",
@@ -25,10 +27,13 @@
     "fastify-routes-stats": "^2.0.1",
     "http-errors": "^1.8.0",
     "http-status-codes": "^2.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.10",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/http-errors": "^1.8.1",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^16.0.0",
     "nodemon": "^2.0.14",
     "pino-pretty": "^7.2.0",

@@ -10,18 +10,29 @@ import { resolve } from 'path';
 import { StatusCodes } from 'http-status-codes';
 import { bootstrap } from 'fastify-decorators';
 import { schema } from './config/config.schema';
-import { AppController } from './controllers/v1';
+import {
+	AuthController,
+	GarageController,
+	ProductController,
+	SaleController,
+	UserController,
+} from './controllers/v1';
 
 // https://github.com/L2jLiga/fastify-decorators/
 
 declare module 'fastify' {
-	// interface FastifyRequest {
-	// 	userId: string;
-	// }
+	interface FastifyRequest {
+		userId: string;
+	}
 
 	interface FastifyInstance {
 		config: {
 			PORT: string;
+			MONGODB_URI: string;
+			JWT_SECRET: string;
+			JWT_REFRESH_SECRET: string;
+			JWT_SECRET_EXPIRES_IN: string;
+			JWT_REFRESH_SECRET_EXPIRES_IN: string;
 		};
 	}
 }
@@ -72,7 +83,13 @@ export default async function Server(
 	// });
 
 	server.register(bootstrap, {
-		controllers: [AppController],
+		controllers: [
+			AuthController,
+			GarageController,
+			ProductController,
+			SaleController,
+			UserController,
+		],
 	});
 
 	return server;
