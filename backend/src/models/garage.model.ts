@@ -6,6 +6,13 @@ import {
 } from '@typegoose/typegoose';
 import { User } from './user.model';
 
+export enum VehicleType {
+	LINEAL = 'lineal',
+	MOTOTAXI = 'mototaxi',
+	CARRO = 'carro',
+	CAMION = 'camion',
+}
+
 @ModelOptions({
 	schemaOptions: {
 		timestamps: true,
@@ -14,8 +21,9 @@ import { User } from './user.model';
 export class Garage {
 	@prop({
 		required: true,
+		enum: VehicleType,
 	})
-	public type!: string;
+	public type!: string; // Tipo de vehiculo [Mototaxi, Moto Lineal, Carro, Camion]
 
 	@prop({
 		required: true,
@@ -23,7 +31,7 @@ export class Garage {
 	public paid!: number;
 
 	@prop({
-		required: true,
+		// required: true,
 	})
 	public placa!: string;
 

@@ -4,27 +4,42 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Platform,
+  Alert,
 } from 'react-native';
 import {Box, Text, Input, Icon, Button, Image} from 'react-native-magnus';
 import api from '../../api';
 import {useTokenStore, setTokensSelector} from '../../stores/useTokensStore';
 
 export const OnBoardingStack = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const setTokens = useTokenStore(setTokensSelector);
 
-  const disabled = username === '' || password === '' || isLoading;
+  const disabled = email === '' || password === '' || isLoading;
 
   const handleSubmit = async () => {
-    // make api call here...
-    // api.post('/login');
     setIsLoading(true);
-    setTokens({
-      accessToken: 'sadsad',
-      refreshToken: 'dsadsadsa',
-    });
+
+    try {
+      const {data, status} = await api.post('/auth/login', {
+        email,
+        password,
+      });
+
+      if (status === 200) {
+        const {accessToken, refreshToken} = data;
+
+        setTokens({
+          accessToken,
+          refreshToken,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Error al ingresar', 'Por favor verifica tus datos.');
+    }
+
     setIsLoading(false);
   };
 
@@ -48,12 +63,13 @@ export const OnBoardingStack = () => {
               </Text>
             </Box>
             <Box px={20}>
-              <Text mb={5}>Nombre de usuario</Text>
+              <Text mb={5}>Correo electrónico</Text>
               <Input
                 autoCapitalize="none"
                 rounded="lg"
-                value={username}
-                onChangeText={u => setUsername(u)}
+                keyboardType="email-address"
+                value={email}
+                onChangeText={e => setEmail(e)}
               />
             </Box>
             <Box m={15} />

@@ -1,4 +1,5 @@
 import { prop, getModelForClass, ModelOptions } from '@typegoose/typegoose';
+import { EMAIL_REGEX } from '../constants/regex';
 
 @ModelOptions({
 	schemaOptions: {
@@ -14,6 +15,7 @@ export class User {
 	@prop({
 		required: true,
 		unique: true,
+		match: EMAIL_REGEX,
 	})
 	public email!: string;
 
@@ -23,13 +25,13 @@ export class User {
 	public password!: string;
 
 	@prop({
-		required: true,
+		// required: true,
 		default: false,
 	})
 	public isAdmin!: boolean;
 
 	@prop({
-		required: true,
+		// required: true,
 		default: false,
 	})
 	public isBanned!: boolean;
