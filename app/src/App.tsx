@@ -1,29 +1,37 @@
-import React from 'react';
-import {StatusBar} from 'react-native';
+import React, {useState} from 'react';
 import {ThemeProvider} from 'react-native-magnus';
-import {NavigationContainer} from '@react-navigation/native';
-import {
-  useTokenStore,
-  loadTokensSelector,
-  tokensAreReadySelector,
-} from './stores/useTokensStore';
-import {AuthenticationSwitch} from './navigation/AuthenticationSwitch';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {httpBatchLink} from '@trpc/client';
+import {trpc} from '@eris/modules/trpc/client';
+import {Root} from './navigation/Root';
 
-function App() {
-  const loadTokens = useTokenStore(loadTokensSelector);
-  const tokensAreReady = useTokenStore(tokensAreReadySelector);
-
-  if (!tokensAreReady) {
-    loadTokens();
-  }
+const App = () => {
+  const [queryClient] = useState(() => new QueryClient());
+  const [trpcClient] = useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: 'http://192.168.1.46:3000/api',
+          // optional
+          headers() {
+            return {
+              authorization: '',
+            };
+          },
+        }),
+      ],
+    }),
+  );
 
   return (
-    <ThemeProvider>
-      <NavigationContainer>
-        <AuthenticationSwitch />
-      </NavigationContainer>
-    </ThemeProvider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <Root />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </trpc.Provider>
   );
-}
+};
 
 export default App;

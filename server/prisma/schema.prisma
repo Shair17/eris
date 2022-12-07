@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Vehicle {
+  MOTO
+  MOTOTAXI
+  CARRO
+  CAMION
+  OTRO
+}
+
+model GarageRecord {
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  vehicle            Vehicle
+  vehicleDescription String?
+  vehiclePhoto       String?
+  vehicleShield      String?
+  vehicleOwner       String
+  receivedBy         User      @relation(fields: [userId], references: [id])
+  userId             String    @db.ObjectId
+  departureDate      DateTime?
+  amountPaid         Float
+  note               String?
+  garage             Garage?   @relation(fields: [garageId], references: [id])
+  garageId           String?   @db.ObjectId
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@map("garage_records")
+}
+
+model Garage {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  owner         User?          @relation(fields: [userId], references: [id])
+  userId        String?        @db.ObjectId
+  garageRecords GarageRecord[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("garages")
+}
+
+model Sale {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  productIDs String[]  @db.ObjectId
+  products   Product[] @relation(fields: [productIDs], references: [id])
+  store      Store     @relation(fields: [storeId], references: [id])
+  storeId    String    @db.ObjectId
+  soldBy     User      @relation(fields: [userId], references: [id])
+  userId     String    @db.ObjectId
+  soldTo     String
+  payout     Float
+  note       String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@map("sales")
+}
+
+enum SotckType {
+  UNIT
+  KG
+}
+
+model Product {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  price       Float     @default(0)
+  blurHash    String
+  description String?
+  note        String?
+  image       String
+  available   Boolean   @default(true)
+  store       Store     @relation(fields: [storeId], references: [id])
+  storeId     String    @db.ObjectId
+  stock       Float     @default(0)
+  stockType   SotckType
+  salesIDs    String[]  @db.ObjectId
+  sales       Sale[]    @relation(fields: [salesIDs], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("products")
+}
+
+model Store {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  products  Product[]
+  owner     User      @relation(fields: [ownerId], references: [id])
+  ownerId   String    @db.ObjectId
+  sales     Sale[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("stores")
+}
+
+enum Role {
+  GUEST // Invitado, solo podrá leer información.
+  USER // Usuario, podrá leer, crear, actualizar y eliminar información que sea solo de su pertenencia.
+  ADMIN // Admin, podrá leer, crear, actualizar y eliminar información de todo y de todos.
+}
+
+model User {
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  email              String         @unique
+  password           String
+  avatar             String
+  role               Role           @default(USER)
+  refreshToken       String?
+  resetPasswordToken String?
+  isActive           Boolean        @default(false)
+  isBanned           Boolean        @default(false)
+  banReason          String?
+  stores             Store[]
+  sales              Sale[]
+  garages            Garage[]
+  garageRecords      GarageRecord[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@map("users")
+}
