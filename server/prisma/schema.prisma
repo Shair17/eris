@@ -24,7 +24,7 @@ model GarageRecord {
   vehicleDescription String?
   vehiclePhoto       String?
   vehicleShield      String?
-  vehicleOwner       String
+  vehicleOwnerName   String
   receivedBy         User      @relation(fields: [userId], references: [id])
   userId             String    @db.ObjectId
   departureDate      DateTime?
@@ -41,12 +41,11 @@ model GarageRecord {
 model Garage {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
   name          String
-  owner         User?          @relation(fields: [userId], references: [id])
-  userId        String?        @db.ObjectId
+  owners        User[]         @relation(fields: [ownersIDs], references: [id])
+  ownersIDs     String[]       @db.ObjectId
   garageRecords GarageRecord[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   @@map("garages")
 }
@@ -98,8 +97,8 @@ model Store {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   products  Product[]
-  owner     User      @relation(fields: [ownerId], references: [id])
-  ownerId   String    @db.ObjectId
+  ownersIDs String[]  @db.ObjectId
+  owners    User[]    @relation(fields: [ownersIDs], references: [id])
   sales     Sale[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -125,9 +124,11 @@ model User {
   isActive           Boolean        @default(false)
   isBanned           Boolean        @default(false)
   banReason          String?
-  stores             Store[]
+  storesIDs          String[]       @db.ObjectId
+  stores             Store[]        @relation(fields: [storesIDs], references: [id])
   sales              Sale[]
-  garages            Garage[]
+  garagesIDs         String[]       @db.ObjectId
+  garages            Garage[]       @relation(fields: [garagesIDs], references: [id])
   garageRecords      GarageRecord[]
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt

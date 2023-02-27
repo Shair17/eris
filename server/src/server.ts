@@ -16,10 +16,6 @@ import {Context} from './context';
 import {UserPayload} from './types';
 import {server as serverConstants} from './constants/app';
 
-// ACTUALMENTE SE ESTÁ EN SCHEMA FIRST EN GRAPHQL
-// TENEMOS QUE PASARNOS A CODE FIRST CON NEXUS...
-// https://github.com/prisma/prisma-examples/tree/latest/typescript/graphql-fastify
-
 declare module 'fastify' {
   interface FastifyInstance {
     config: ConfigSchemaType;

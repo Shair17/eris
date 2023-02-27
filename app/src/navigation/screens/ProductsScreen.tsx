@@ -1,5 +1,14 @@
 import React, {useState} from 'react';
-import {Div, Text, Overlay, Input, Button, Icon} from 'react-native-magnus';
+import {
+  Div,
+  Text,
+  Overlay,
+  Input,
+  Button,
+  Icon,
+  Toggle,
+  Radio,
+} from 'react-native-magnus';
 import {MaterialTopTabScreenProps} from '@react-navigation/material-top-tabs';
 import {FabPlus} from '@eris/components/FabPlus';
 import {TopTabStackParamsList} from './StoreScreen';
@@ -7,13 +16,24 @@ import {TouchableOpacity} from 'react-native';
 import {generateRandomColor} from '@eris/utils/colors';
 import {FlashList} from '@shopify/flash-list';
 
-const DATA = [...Array(100).keys()];
+// name        String
+// price       Float     @default(0)
+// blurHash    String
+// description String?
+// note        String?
+// image       String
+// available   Boolean   @default(true)
+// stock       Float     @default(0)
+// stockType   UNIDAD | KILOGRAMOS
+
+const DATA = [...Array(10).keys()];
 
 interface Props
   extends MaterialTopTabScreenProps<TopTabStackParamsList, 'ProductsScreen'> {}
 
 export const ProductsScreen: React.FC<Props> = ({navigation, route}) => {
-  const [addProductModal, setAddProductModal] = useState(false);
+  const [addProductModal, setAddProductModal] = useState<boolean>(false);
+  const [productAvailable, setProductAvailable] = useState<boolean>(false);
   const storeId = route.params.storeId;
 
   return (
@@ -96,13 +116,102 @@ export const ProductsScreen: React.FC<Props> = ({navigation, route}) => {
           bg="white"
           animationType="fade"
           onBackdropPress={() => setAddProductModal(false)}>
+          <Div row justifyContent="space-between" alignItems="center">
+            <Div
+              bgImg={{
+                uri: 'https://res.cloudinary.com/fastly-delivery-app-peru/image/upload/v1631005766/defaults/avatars/fastly_mwizrt.jpg',
+              }}
+              w={50}
+              h={50}
+              rounded="2xl"
+            />
+
+            <Div mx="xs" />
+
+            <Input
+              flex={1}
+              rounded="2xl"
+              placeholder="Nombre del producto"
+              maxLength={32}
+              borderColor="#0083fa"
+              autoFocus
+            />
+          </Div>
+
           <Input
+            mt="lg"
             rounded="2xl"
-            placeholder="Nombre cool de tu tienda 😎⚡"
+            placeholder="Precio del producto"
             maxLength={32}
             borderColor="#0083fa"
-            autoFocus
           />
+
+          <Div row mt="lg" justifyContent="space-between">
+            <Input
+              flex={1}
+              rounded="2xl"
+              placeholder="Descripción"
+              maxLength={32}
+              borderColor="#0083fa"
+            />
+
+            <Div mx="xs" />
+
+            <Input
+              flex={1}
+              rounded="2xl"
+              placeholder="Nota"
+              maxLength={32}
+              borderColor="#0083fa"
+            />
+          </Div>
+
+          <Div mt="lg" row justifyContent="space-between">
+            <Input
+              flex={1}
+              rounded="2xl"
+              placeholder="Stock"
+              maxLength={32}
+              borderColor="#0083fa"
+            />
+
+            <Div mx="xs" />
+
+            <Div alignItems="center" justifyContent="center">
+              <Radio.Group row>
+                {['UNIDAD', 'KG'].map(item => (
+                  <Radio value={item}>
+                    {({checked}) => (
+                      <Div
+                        alignItems="center"
+                        justifyContent="center"
+                        bg={checked ? 'blue600' : 'blue100'}
+                        p="md"
+                        rounded="2xl">
+                        <Text color={checked ? 'white' : 'gray800'}>
+                          {item}
+                        </Text>
+                      </Div>
+                    )}
+                  </Radio>
+                ))}
+              </Radio.Group>
+            </Div>
+          </Div>
+
+          <Div mt="lg" row justifyContent="space-between">
+            <Text fontSize="lg">¿El producto está disponible?</Text>
+            <Toggle
+              on={productAvailable}
+              onPress={() => setProductAvailable(!productAvailable)}
+              bg="gray200"
+              circleBg="blue500"
+              activeBg="blue700"
+              h={25}
+              w={50}
+            />
+          </Div>
+
           <Button
             h={50}
             block
@@ -120,7 +229,7 @@ export const ProductsScreen: React.FC<Props> = ({navigation, route}) => {
                 fontSize="xl"
               />
             }>
-            Crear mi Tienda
+            Agregar producto
           </Button>
         </Overlay>
       ) : null}
